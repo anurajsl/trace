@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) | [Semantic Ver
 
 ## [1.0.0] - 2026-03-15
 
-### Added — 22 CLI commands across 18 source files (4,379 lines)
+### Added — 25 CLI commands across 19 source files (4,721 lines)
 
 **Onboarding**
 - `trace init` — New project scaffolding with full enforcement
@@ -51,3 +51,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) | [Semantic Ver
 
 **License Compliance**
 - `trace license` — Scans dependencies for license incompatibilities. Detects project license from package.json/LICENSE file. Checks Node.js, Python, and Go deps against a compatibility matrix. Flags GPL/AGPL in permissive projects, unknown licenses for review.
+
+**AI Process Enforcement (v1.0.0 addition)**
+- AI_INSTRUCTIONS.md template now includes mandatory gate statement rules
+- `trace hook install` / `trace hook uninstall` / `trace hook status` — Git pre-commit hook that blocks incoherent commits
+- `trace watch` upgraded with auto-session mode: detects ungated file changes, auto-opens lightweight sessions, logs to PROJECT_LOG and HANDOFF, flags consumer drift. Closes after 5min inactivity.
+- `trace watch --no-auto-session` for warnings-only mode
+- `trace watch --timeout <min>` for custom inactivity timeout
+
+Three-layer defense against AI ceremony skipping:
+  Layer 1: AI_INSTRUCTIONS.md tells AI to follow gates (behavioral nudge)
+  Layer 2: trace watch auto-session captures changes even when AI skips gates (passive operator)
+  Layer 3: Pre-commit hook blocks incoherent commits (hard enforcement)

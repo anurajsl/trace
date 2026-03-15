@@ -3,13 +3,13 @@
 [![npm version](https://img.shields.io/npm/v/trace-coherence.svg)](https://www.npmjs.com/package/trace-coherence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/trace-coherence.svg)](https://nodejs.org)
-[![Tests](https://img.shields.io/badge/tests-37%2F37-brightgreen.svg)](https://github.com/anuraj/trace-coherence)
+[![Tests](https://img.shields.io/badge/tests-45%2F45-brightgreen.svg)](https://github.com/anuraj/trace-coherence)
 
 **Your AI writes great code. TRACE keeps it coherent.**
 
 When AI tools help you build software, files drift out of sync across sessions. An anchor changes but its consumers don't. Docs fall behind. Complexity creeps in. Nobody notices until production breaks.
 
-TRACE enforces structural integrity automatically - so you ship with confidence, not crossed fingers.
+TRACE enforces structural integrity automatically — so you ship with confidence, not crossed fingers.
 
 ## Install
 
@@ -93,7 +93,10 @@ trace gate start     # Begin session (warn mode — gradual adoption)
 |---------|-------------|
 | `trace validate` | Check trace.yaml for errors, typos, and "did you mean?" suggestions |
 | `trace upgrade` | Add missing config sections — schema migration without data loss |
-| `trace watch` | Monitor anchors + consumers, check on save (Ctrl+C to stop) |
+| `trace watch` | Monitor files + auto-session when AI skips gates |
+| `trace hook install` | Install pre-commit hook (blocks incoherent commits) |
+| `trace hook uninstall` | Remove pre-commit hook |
+| `trace hook status` | Check if hook is installed |
 | `trace license` | Scan dependencies for license compliance |
 
 ## Key Features
@@ -162,9 +165,9 @@ trace metrics     # After 5+ sessions
 
 ## Stats
 
-- **4,379 lines** across **18 source files**
-- **22 commands** covering the full development lifecycle
-- **37 tests** with zero-dependency test runner
+- **4,721 lines** across **19 source files**
+- **25 commands** covering the full development lifecycle
+- **45 tests** with zero-dependency test runner
 - **1 dependency** (`yaml`)
 - **Language-agnostic** — TypeScript, JavaScript, Python, Go, Java, and more
 - **Tool-agnostic** — Claude, Copilot, Cursor, ChatGPT, or any AI tool

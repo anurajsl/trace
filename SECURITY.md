@@ -52,7 +52,7 @@ TRACE does not process personal data of any kind. No data subject rights apply b
 ### SOC 2
 - **Confidentiality**: All data remains local. No external transmission.
 - **Availability**: CLI tool with no server component. No uptime concerns.
-- **Processing integrity**: SHA-256 checksums verify file integrity. 37 automated tests validate correctness.
+- **Processing integrity**: SHA-256 checksums verify file integrity. 45 automated tests validate correctness.
 - **Privacy**: No personal information is collected, stored, or processed.
 
 ### ISO 27001

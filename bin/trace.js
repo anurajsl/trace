@@ -57,8 +57,12 @@ ${c.bold}Maintenance:${c.reset}
 
   ${c.cyan}trace validate${c.reset}                  Check trace.yaml for errors and typos
   ${c.cyan}trace upgrade${c.reset}                   Add missing config sections (schema migration)
-  ${c.cyan}trace watch${c.reset}                     Monitor files and check on save (Ctrl+C to stop)
+  ${c.cyan}trace watch${c.reset}                     Monitor files + auto-session when AI skips gates
+  ${c.cyan}trace watch --no-auto-session${c.reset}   Watch mode without auto-session (warnings only)
   ${c.cyan}trace license${c.reset}                   Scan dependencies for license compliance
+  ${c.cyan}trace hook install${c.reset}              Install pre-commit hook (blocks incoherent commits)
+  ${c.cyan}trace hook uninstall${c.reset}            Remove pre-commit hook
+  ${c.cyan}trace hook status${c.reset}               Check if hook is installed
 
 ${c.bold}Workflow:${c.reset}
 
@@ -67,7 +71,7 @@ ${c.bold}Workflow:${c.reset}
   3. ${c.dim}Save progress:${c.reset}    trace checkpoint "file.ts" "next step"
   4. ${c.dim}End session:${c.reset}      trace gate end
 
-${c.dim}https://github.com/anuraj/trace${c.reset}
+${c.dim}https://github.com/anurajsl/trace${c.reset}
 `;
 
 async function main() {
@@ -163,7 +167,12 @@ async function main() {
     }
     case 'watch': {
       const { runWatch } = await import('../src/watch.js');
-      runWatch();
+      runWatch(args);
+      break;
+    }
+    case 'hook': {
+      const { runHook } = await import('../src/hook.js');
+      runHook(args);
       break;
     }
     case 'license': {

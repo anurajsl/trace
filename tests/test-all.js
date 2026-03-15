@@ -487,6 +487,106 @@ test('trace license flags GPL dep in MIT project', () => {
 });
 
 // ============================================================
+console.log('\x1b[36m--- Hook ---\x1b[0m');
+// ============================================================
+
+test('trace hook shows usage without subcommand', () => {
+  const dir = setupTempProject('hook-usage');
+  try {
+    run(`echo "HookTest" | node ${CLI} init`, { cwd: dir });
+    const out = run(`node ${CLI} hook 2>&1`, { cwd: dir });
+    assert(out.includes('install') && out.includes('uninstall'), 'Should show usage');
+  } finally { cleanup(dir); }
+});
+
+test('trace hook install creates pre-commit hook', () => {
+  const dir = setupTempProject('hook-install');
+  try {
+    run(`echo "HookTest" | node ${CLI} init`, { cwd: dir });
+    run('git init && git config user.email "t@t.com" && git config user.name "T"', { cwd: dir });
+    const out = run(`node ${CLI} hook install 2>&1`, { cwd: dir });
+    assert(out.includes('installed') || out.includes('Install'), 'Should confirm install');
+    assert(fs.existsSync(path.join(dir, '.git/hooks/pre-commit')), 'Hook file should exist');
+    const hook = fs.readFileSync(path.join(dir, '.git/hooks/pre-commit'), 'utf8');
+    assert(hook.includes('TRACE'), 'Hook should contain TRACE marker');
+  } finally { cleanup(dir); }
+});
+
+test('trace hook status detects installed hook', () => {
+  const dir = setupTempProject('hook-status');
+  try {
+    run(`echo "HookTest" | node ${CLI} init`, { cwd: dir });
+    run('git init && git config user.email "t@t.com" && git config user.name "T"', { cwd: dir });
+    run(`node ${CLI} hook install 2>&1`, { cwd: dir });
+    const out = run(`node ${CLI} hook status 2>&1`, { cwd: dir });
+    assert(out.includes('installed') || out.includes('active'), 'Should show installed');
+  } finally { cleanup(dir); }
+});
+
+test('trace hook uninstall removes hook', () => {
+  const dir = setupTempProject('hook-uninstall');
+  try {
+    run(`echo "HookTest" | node ${CLI} init`, { cwd: dir });
+    run('git init && git config user.email "t@t.com" && git config user.name "T"', { cwd: dir });
+    run(`node ${CLI} hook install 2>&1`, { cwd: dir });
+    const out = run(`node ${CLI} hook uninstall 2>&1`, { cwd: dir });
+    assert(out.includes('removed') || out.includes('Removed'), 'Should confirm removal');
+    assert(!fs.existsSync(path.join(dir, '.git/hooks/pre-commit')), 'Hook file should be gone');
+  } finally { cleanup(dir); }
+});
+
+// ============================================================
+console.log('\x1b[36m--- Watch (auto-session) ---\x1b[0m');
+// ============================================================
+
+test('trace watch with no anchors shows warning', () => {
+  const dir = setupTempProject('watch-empty2');
+  try {
+    run(`echo "WatchTest" | node ${CLI} init`, { cwd: dir });
+    const out = run(`node ${CLI} watch --no-auto-session 2>&1`, { cwd: dir, expectFail: true });
+    assert(out.includes('No anchors') || out.includes('nothing to watch'), 'Should warn about no anchors');
+  } finally { cleanup(dir); }
+});
+
+test('trace watch shows auto-session ON by default', () => {
+  const dir = setupTempProject('watch-auto2');
+  try {
+    run(`echo "WatchTest" | node ${CLI} init`, { cwd: dir });
+    // Write a trace.yaml with an actual anchor
+    fs.writeFileSync(path.join(dir, 'trace.yaml'), 'project:\n  name: WatchTest\nanchors:\n  - id: test_anchor\n    file: test.js\n    consumers: []\n');
+    fs.writeFileSync(path.join(dir, 'test.js'), 'console.log("test");');
+    const out = run(`timeout 2 node ${CLI} watch 2>&1 || true`, { cwd: dir });
+    assert(out.includes('Auto-session') && out.includes('ON'), 'Should show auto-session ON');
+  } finally { cleanup(dir); }
+});
+
+test('trace watch --no-auto-session shows OFF', () => {
+  const dir = setupTempProject('watch-noauto2');
+  try {
+    run(`echo "WatchTest" | node ${CLI} init`, { cwd: dir });
+    fs.writeFileSync(path.join(dir, 'trace.yaml'), 'project:\n  name: WatchTest\nanchors:\n  - id: test_anchor\n    file: test.js\n    consumers: []\n');
+    fs.writeFileSync(path.join(dir, 'test.js'), 'console.log("test");');
+    const out = run(`timeout 2 node ${CLI} watch --no-auto-session 2>&1 || true`, { cwd: dir });
+    assert(out.includes('OFF'), 'Should show auto-session OFF');
+  } finally { cleanup(dir); }
+});
+
+// ============================================================
+console.log('\x1b[36m--- AI Instructions ---\x1b[0m');
+// ============================================================
+
+test('trace init creates AI_INSTRUCTIONS with gate rule', () => {
+  const dir = setupTempProject('ai-instructions');
+  try {
+    run(`echo "AITest" | node ${CLI} init`, { cwd: dir });
+    const instructions = fs.readFileSync(path.join(dir, '.trace/AI_INSTRUCTIONS.md'), 'utf8');
+    assert(instructions.includes('GATE RULE'), 'Should contain GATE RULE section');
+    assert(instructions.includes('TRACE GATE: Opening'), 'Should contain gate opening format');
+    assert(instructions.includes('NO exceptions'), 'Should state no exceptions');
+  } finally { cleanup(dir); }
+});
+
+// ============================================================
 // SUMMARY
 // ============================================================
 console.log(`\n\x1b[1m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m`);

@@ -8,13 +8,13 @@ Thank you for considering a contribution to TRACE. This document explains how to
 git clone https://github.com/anuraj/trace-coherence.git
 cd trace-coherence
 npm install
-npm test    # 37 tests should pass
+npm test    # 45 tests should pass
 ```
 
 ## Running Tests
 
 ```bash
-npm test                     # Run all 37 tests
+npm test                     # Run all 45 tests
 node tests/test-all.js       # Same thing, directly
 ```
 
@@ -45,7 +45,7 @@ trace-coherence/
 │   ├── validate.js       # Config validation
 │   └── watch.js          # File watcher
 ├── templates/            # 11 templates for init/scan
-├── tests/test-all.js     # Test suite (37 tests)
+├── tests/test-all.js     # Test suite (45 tests)
 ├── CHANGELOG.md
 ├── SECURITY.md
 ├── LICENSE               # MIT
