@@ -1,0 +1,53 @@
+{
+  "name": "trace-coherence",
+  "version": "1.0.0",
+  "description": "Structural coherence engineering for AI-augmented software systems. Enforces truth anchoring, registry verification, automated testing, complexity thresholds, and execution contracts.",
+  "author": "Anuraj",
+  "license": "MIT",
+  "homepage": "https://github.com/anuraj/trace-coherence#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anuraj/trace-coherence.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anuraj/trace-coherence/issues"
+  },
+  "bin": {
+    "trace": "./bin/trace.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node tests/test-all.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "trace",
+    "coherence",
+    "structural-coherence",
+    "ai-assisted-development",
+    "code-quality",
+    "artifact-drift",
+    "truth-anchoring",
+    "developer-tools",
+    "cli",
+    "linter",
+    "code-review",
+    "ci-cd",
+    "testing",
+    "documentation-enforcement",
+    "session-gates"
+  ],
+  "dependencies": {
+    "yaml": "^2.3.0"
+  }
+}

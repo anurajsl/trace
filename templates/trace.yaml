@@ -1,0 +1,231 @@
+# ============================================================
+# TRACE — Trusted Registry for Artifact Consistency and Evolution
+# Project Configuration (trace.yaml)
+# ============================================================
+# This file is the single source of truth for your project's
+# coherence rules. Any tool (CLI, CI, IDE, AI agent) reads
+# this file to enforce TRACE.
+# ============================================================
+
+project:
+  name: "{PROJECT_NAME}"
+  version: "1.0.0"
+  created: "{DATE}"
+
+# ----------------------------------------------------------
+# PILLAR T: Truth Anchoring
+# Every concept has ONE authoritative source.
+# Consumers must derive from or verify against the anchor.
+# ----------------------------------------------------------
+anchors:
+  # Example:
+  # - id: user_schema
+  #   description: "Canonical definition of the User model"
+  #   file: "src/models/user.ts"
+  #   consumers:
+  #     - "src/api/users.ts"
+  #     - "docs/data-model.md"
+  #     - "openapi.yaml"
+  #   sync_check: "npm run check:user-schema"  # optional automated check
+
+# ----------------------------------------------------------
+# PILLAR R: Registry Enforcement
+# Documentation is a verified artifact, not an afterthought.
+# ----------------------------------------------------------
+registry:
+  docs_root: "docs/"
+  tracked_docs:
+    # Example:
+    # - file: "docs/feature-guide.md"
+    #   tracks: "feature_count"
+    #   verify: "node scripts/count-features.js"
+  review_cycle: "quarterly"
+
+# ----------------------------------------------------------
+# PILLAR A: Automated Verification
+# Tiered testing. Tests grow. They never shrink.
+# ----------------------------------------------------------
+verification:
+  tiers:
+    tier1:
+      description: "Unit-level. Fast. Runs on every change."
+      command: ""           # e.g., "npm test"
+      min_count: 0          # minimum number of tests (monotonic)
+    tier2:
+      description: "Behavioral. Validates user-facing outcomes."
+      command: ""           # e.g., "npm run test:integration"
+      min_count: 0
+    tier3:
+      description: "Systemic. Cross-platform, cross-artifact."
+      command: ""           # e.g., "npm run test:e2e"
+      min_count: 0
+
+# ----------------------------------------------------------
+# PILLAR C: Controlled Evolution
+# Complexity has thresholds. Growth is managed.
+# ----------------------------------------------------------
+thresholds:
+  max_file_lines: 400       # single file complexity cap
+  max_function_lines: 50    # single function cap
+  max_cyclomatic: 15        # cyclomatic complexity cap
+  max_anchor_consumers: 10  # too many consumers = refactor signal
+
+# ----------------------------------------------------------
+# PILLAR E: Execution Contracts
+# Every change type has a defined process.
+# ----------------------------------------------------------
+contracts:
+  feature:
+    description: "Adding new functionality"
+    requires_scope_declaration: true
+    verification_tier: "tier2"
+    steps:
+      - "Declare scope (what will change, what anchors are affected)"
+      - "Verify baseline (all existing tests pass)"
+      - "Check complexity thresholds"
+      - "Implement with verification at each step"
+      - "Update all consumer files for affected anchors"
+      - "Update documentation registry"
+      - "Run full verification suite"
+      - "Record attestation in project log"
+
+  bugfix:
+    description: "Fixing a known defect"
+    requires_scope_declaration: false
+    verification_tier: "tier1"
+    root_cause_required: true         # <-- TRACE soul: no workarounds
+    steps:
+      - "Identify root cause (which anchor or consumer drifted?)"
+      - "Verify baseline"
+      - "Fix at the source, not the symptom"
+      - "Add regression test (tier1 minimum)"
+      - "Verify no other consumers affected"
+      - "Update project log with root cause"
+
+  hotfix:
+    description: "Emergency production fix"
+    requires_scope_declaration: false
+    verification_tier: "tier1"
+    creates_debt: true
+    debt_resolution: "next_cycle"
+    steps:
+      - "Log emergency override reason"
+      - "Fix issue with minimal change"
+      - "Run tier1 verification"
+      - "Deploy"
+      - "Create deferred compliance entry"
+
+  refactor:
+    description: "Restructuring without behavior change"
+    requires_scope_declaration: true
+    verification_tier: "tier2"
+    steps:
+      - "Declare scope (what files will move/change)"
+      - "Verify baseline (snapshot current behavior)"
+      - "Refactor incrementally with checks"
+      - "Verify behavior unchanged"
+      - "Update all anchor references"
+      - "Update documentation"
+
+# ----------------------------------------------------------
+# Change Sensitivity Classification
+# Determines minimum verification tier per file.
+# ----------------------------------------------------------
+file_classification:
+  core:
+    description: "Anchor files. Change here = high impact."
+    patterns: []          # e.g., ["src/models/**", "src/core/**"]
+    min_verification: "tier2"
+    requires_review: true
+
+  supporting:
+    description: "Consumer files. Moderate impact."
+    patterns: []          # e.g., ["src/api/**", "src/services/**"]
+    min_verification: "tier1"
+    requires_review: true
+
+  peripheral:
+    description: "Low coupling. Minimal impact."
+    patterns: []          # e.g., ["scripts/**", "docs/**"]
+    min_verification: "tier1"
+    requires_review: false
+
+# ----------------------------------------------------------
+# Code Review Checklist (customizable per project)
+# ----------------------------------------------------------
+code_review:
+  checklist:
+    - "All affected anchors identified and updated?"
+    - "All consumer files for changed anchors verified?"
+    - "Documentation reflects the change?"
+    - "Tests added or updated? (never removed without replacement)"
+    - "Complexity thresholds respected?"
+    - "Root cause addressed (not just symptom)?"
+  custom_checks: []
+    # Add project-specific review items here
+    # e.g., "Cross-browser tested?" for web projects
+    # e.g., "Migration script included?" for DB changes
+
+# ----------------------------------------------------------
+# Session Gates
+# Enforced at session start and end. Not optional.
+# ----------------------------------------------------------
+gates:
+  start:
+    checks:
+      - "trace_state_exists"        # TRACE_STATE.yaml present
+      - "baseline_tests_pass"       # existing tests green
+      - "no_unresolved_debt"        # or debt is acknowledged
+      - "live_checkpoint_recovery"  # recover from crash if needed
+    on_fail: "block"                # block | warn
+
+  end:
+    checks:
+      - "all_tests_pass"            # verification suite green
+      - "anchors_coherent"          # no anchor-consumer drift
+      - "docs_updated"              # registry enforcement
+      - "scope_complete"            # all declared items done or deferred
+      - "project_log_updated"       # session recorded
+      - "handoff_ready"             # next session can cold-start
+    on_fail: "block"                # block | warn
+
+# ----------------------------------------------------------
+# Resumability Artifacts
+# These files enable cold-start by any contributor.
+# ----------------------------------------------------------
+artifacts:
+  trace_state: ".trace/TRACE_STATE.yaml"
+  project_log: ".trace/PROJECT_LOG.md"
+  live_checkpoint: ".trace/LIVE_CHECKPOINT.yaml"
+  debt_log: ".trace/DEBT.yaml"
+  handoff: ".trace/HANDOFF.md"
+
+# ----------------------------------------------------------
+# TRACE Debt Tracking
+# When gates are overridden, debt is logged.
+# ----------------------------------------------------------
+debt:
+  max_accumulated: 5              # 5+ items = mandatory resolution cycle
+  severity:
+    minor:
+      resolution_window: 3        # cycles
+    major:
+      resolution_window: 1        # cycles
+
+# ----------------------------------------------------------
+# Quality Checks (runs at gate end)
+# Your project's own tools — TRACE orchestrates, you configure.
+# trace scan auto-detects these from package.json / Makefile.
+# ----------------------------------------------------------
+quality:
+  checks: []
+    # Example:
+    # - name: "Lint"
+    #   command: "npm run lint"
+    #   on_fail: "warn"        # warn | block
+    # - name: "Type check"
+    #   command: "npx tsc --noEmit"
+    #   on_fail: "block"
+    # - name: "Format"
+    #   command: "npm run format:check"
+    #   on_fail: "warn"

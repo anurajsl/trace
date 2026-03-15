@@ -1,0 +1,75 @@
+# .github/workflows/trace.yml
+# TRACE Coherence Check — PR-scoped analysis with inline comments
+# Only checks files changed in the PR, not the entire project.
+# Posts findings as a PR comment with actionable remediation steps.
+
+name: TRACE Coherence
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  coherence-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for accurate diff
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install TRACE
+        run: npm install -g trace-coherence
+
+      - name: Run PR-scoped coherence check
+        id: trace
+        run: |
+          trace ci --json --comment-file /tmp/trace-comment.md
+        continue-on-error: true
+
+      - name: Comment on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const commentPath = '/tmp/trace-comment.md';
+            if (!fs.existsSync(commentPath)) return;
+            
+            const body = fs.readFileSync(commentPath, 'utf8');
+            if (!body.trim()) return;
+
+            // Find existing TRACE comment to update (avoid spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes('TRACE Coherence'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }
+
+      - name: Fail if critical findings
+        if: steps.trace.outcome == 'failure'
+        run: exit 1
