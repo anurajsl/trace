@@ -9,7 +9,7 @@
 
 When AI tools help you build software, files drift out of sync across sessions. An anchor changes but its consumers don't. Docs fall behind. Complexity creeps in. Nobody notices until production breaks.
 
-TRACE enforces structural integrity automatically — so you ship with confidence, not crossed fingers.
+TRACE enforces structural integrity automatically - so you ship with confidence, not crossed fingers.
 
 ## Install
 
