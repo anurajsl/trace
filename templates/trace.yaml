@@ -229,3 +229,42 @@ quality:
     # - name: "Format"
     #   command: "npm run format:check"
     #   on_fail: "warn"
+
+# ----------------------------------------------------------
+# Dependency Governance
+# Controls which packages can be added and flags risky ones.
+# Run: trace deps audit
+# ----------------------------------------------------------
+dependencies:
+  policy: moderate                # strict | moderate | permissive
+  # max_dependencies: 30         # Flag if total exceeds this
+  audit: true                    # Run npm audit / pip audit at gate end
+
+  # Strict mode: only these packages are allowed
+  # allowed:
+  #   - express
+  #   - yaml
+  #   - jest
+
+  # Always rejected (supports glob patterns)
+  blocked: []
+    # - "*-polyfill"
+    # - "left-pad"
+
+  rules:
+    require_license: true
+    # max_age_without_update: 365  # days without a release
+    warn_prerelease: true          # flag pre-1.0 packages
+
+    # License allowlist (leave empty to allow all)
+    allowed_licenses: []
+      # - MIT
+      # - Apache-2.0
+      # - BSD-2-Clause
+      # - BSD-3-Clause
+      # - ISC
+
+    # License blocklist (always rejected)
+    blocked_licenses:
+      - GPL-3.0
+      - AGPL-3.0

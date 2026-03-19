@@ -13,7 +13,8 @@
     "url": "https://github.com/anuraj/trace-coherence/issues"
   },
   "bin": {
-    "trace": "./bin/trace.js"
+    "trace": "./bin/trace.js",
+    "trace-mcp": "./bin/trace-mcp.js"
   },
   "type": "module",
   "engines": {

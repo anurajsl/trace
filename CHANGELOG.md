@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) | [Semantic Ver
 
 ## [1.0.0] - 2026-03-15
 
-### Added — 25 CLI commands across 19 source files (4,721 lines)
+### Added — 28 CLI commands across 21 source files (5,758 lines)
 
 **Onboarding**
 - `trace init` — New project scaffolding with full enforcement
@@ -63,3 +63,24 @@ Three-layer defense against AI ceremony skipping:
   Layer 1: AI_INSTRUCTIONS.md tells AI to follow gates (behavioral nudge)
   Layer 2: trace watch auto-session captures changes even when AI skips gates (passive operator)
   Layer 3: Pre-commit hook blocks incoherent commits (hard enforcement)
+
+**Dependency Governance (v1.0.1)**
+- `trace deps audit` command — checks all packages against configurable policy rules
+- Three policy modes: strict (allowlist only), moderate (rule-based), permissive (flag only)
+- Blocked package detection with glob patterns
+- License compliance (allowed/blocked license lists)
+- Staleness detection (flag packages without recent updates)
+- Pre-1.0 version warnings
+- npm audit integration at gate end
+- `dependencies:` section added to trace.yaml template
+- Supports npm, pip, and cargo projects
+
+**MCP Server — Autonomous AI Integration (v1.0.1)**
+- `trace mcp` — Start MCP server for AI tool integration
+- `trace mcp setup` — Show configuration for Claude Code, Cursor, Kiro
+- `trace-mcp` binary entry point for MCP client configuration
+- 6 MCP tools: trace_context, trace_impact, trace_check, trace_status, trace_deps_check, trace_log
+- JSON-RPC 2.0 over stdio (standard MCP protocol)
+- No additional dependencies — implements protocol directly using Node.js core
+- AI tools now call TRACE automatically: check impact before modifying files, validate coherence after changes, check dependency policy before adding packages
+- Shifts TRACE from reactive (catches problems after) to proactive (prevents problems during)

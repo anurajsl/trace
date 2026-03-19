@@ -296,6 +296,26 @@ export async function runGateEnd() {
   }
 
   // Consumer sync verification (Anchor Impact Protocol)
+  // Dependency governance
+  if (config.dependencies?.policy && config.dependencies.policy !== 'permissive') {
+    console.log(`\n  ${c.bold}Dependency Audit:${c.reset}`);
+    try {
+      const { runDepsAudit } = await import('./deps-audit.js');
+      const auditResult = runDepsAudit([]);
+      if (!auditResult.pass) {
+        if (gateMode === 'block') {
+          gatePass = false;
+          gateFailures.push({ type: 'dependency_audit', detail: 'Policy violation' });
+        } else {
+          printWarn('Dependency issues detected (warning only in warn mode)');
+        }
+      }
+    } catch (e) {
+      printWarn(`Dependency audit skipped: ${e.message}`);
+    }
+  }
+
+  // Consumer sync verification (Anchor Impact Protocol)
   try {
     const { verifyConsumerSync } = await import('./impact.js');
     const syncResult = verifyConsumerSync(root, config);
@@ -316,6 +336,40 @@ export async function runGateEnd() {
     }
   } catch (e) {
     // Impact module not critical
+  }
+
+  // Dependency audit (if configured)
+  const depConfig = config.dependencies || {};
+  if (depConfig.policy || depConfig.audit || depConfig.allowed || depConfig.blocked) {
+    console.log(`\n  ${c.bold}Dependency Audit:${c.reset}`);
+    try {
+      const { runDepsAudit, saveDepsBaseline } = await import('./deps-audit.js');
+      const depResult = runDepsAudit([], { gateMode: true });
+      if (depResult.total > 0) {
+        if (depResult.newDeps?.length > 0) {
+          printInfo(`${depResult.newDeps.length} new dependency(s) detected this session`);
+          for (const nd of depResult.newDeps) {
+            printInfo(`  + ${nd.name}@${nd.version || '?'} (${nd.license || 'unknown license'})`);
+          }
+        }
+        if (depResult.issues.length > 0) {
+          for (const issue of depResult.issues) { printFail(issue); }
+          if (depConfig.policy === 'strict') {
+            gatePass = false;
+            gateFailures.push({ type: 'dependency_audit', detail: `${depResult.issues.length} issue(s)` });
+          }
+        }
+        if (depResult.warnings?.length > 0) {
+          for (const w of depResult.warnings) { printWarn(w); }
+        }
+        if (depResult.passed && (!depResult.warnings || depResult.warnings.length === 0)) {
+          printPass(`${depResult.total} dependencies audited, all clear`);
+        }
+      }
+      saveDepsBaseline(root);
+    } catch (e2) {
+      printWarn(`Dependency audit skipped: ${e2.message}`);
+    }
   }
 
   // Result

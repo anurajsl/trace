@@ -3,13 +3,13 @@
 [![npm version](https://img.shields.io/npm/v/trace-coherence.svg)](https://www.npmjs.com/package/trace-coherence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/trace-coherence.svg)](https://nodejs.org)
-[![Tests](https://img.shields.io/badge/tests-45%2F45-brightgreen.svg)](https://github.com/anuraj/trace-coherence)
+[![Tests](https://img.shields.io/badge/tests-52%2F52-brightgreen.svg)](https://github.com/anuraj/trace-coherence)
 
 **Your AI writes great code. TRACE keeps it coherent.**
 
 When AI tools help you build software, files drift out of sync across sessions. An anchor changes but its consumers don't. Docs fall behind. Complexity creeps in. Nobody notices until production breaks.
 
-TRACE enforces structural integrity automatically - so you ship with confidence, not crossed fingers.
+TRACE enforces structural integrity automatically — so you ship with confidence, not crossed fingers.
 
 ## Install
 
@@ -97,6 +97,33 @@ trace gate start     # Begin session (warn mode — gradual adoption)
 | `trace hook install` | Install pre-commit hook (blocks incoherent commits) |
 | `trace hook uninstall` | Remove pre-commit hook |
 | `trace hook status` | Check if hook is installed |
+
+### MCP Server (AI Integration)
+
+| Command | Description |
+|---|---|
+| `trace mcp` | Start MCP server (AI tools call TRACE automatically) |
+| `trace mcp setup` | Show configuration for Claude Code, Cursor, Kiro |
+| `trace-mcp` | Binary entry point for MCP server (used in config) |
+
+The MCP server makes TRACE **autonomous**. Instead of running commands manually, your AI tool calls TRACE functions automatically:
+- `trace_context` — reads project state before coding
+- `trace_impact` — checks blast radius before modifying files
+- `trace_check` — validates coherence after changes
+- `trace_deps_check` — checks dependency policy before adding packages
+- `trace_log` — records session activity to PROJECT_LOG
+
+**Setup (Claude Code):**
+```json
+// Add to ~/.claude.json or .claude.json
+{
+  "mcpServers": {
+    "trace": {
+      "command": "trace-mcp"
+    }
+  }
+}
+```
 | `trace license` | Scan dependencies for license compliance |
 
 ## Key Features
@@ -165,9 +192,9 @@ trace metrics     # After 5+ sessions
 
 ## Stats
 
-- **4,721 lines** across **19 source files**
-- **25 commands** covering the full development lifecycle
-- **45 tests** with zero-dependency test runner
+- **5,758 lines** across **21 source files**
+- **28 commands** covering the full development lifecycle
+- **52 tests** with zero-dependency test runner
 - **1 dependency** (`yaml`)
 - **Language-agnostic** — TypeScript, JavaScript, Python, Go, Java, and more
 - **Tool-agnostic** — Claude, Copilot, Cursor, ChatGPT, or any AI tool

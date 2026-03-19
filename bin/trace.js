@@ -27,6 +27,7 @@ ${c.bold}Coherence:${c.reset}
   ${c.cyan}trace status${c.reset}                    Quick health overview
   ${c.cyan}trace deps${c.reset}                      Show anchor dependency graph
   ${c.cyan}trace deps <anchor_id>${c.reset}          Impact analysis for specific anchor
+  ${c.cyan}trace deps audit${c.reset}                Dependency governance (policy, security, audit)
   ${c.cyan}trace impact <anchor_id>${c.reset}        Pre-work blast radius assessment
   ${c.cyan}trace search "query"${c.reset}            Search across all TRACE artifacts
 
@@ -64,6 +65,11 @@ ${c.bold}Maintenance:${c.reset}
   ${c.cyan}trace hook uninstall${c.reset}            Remove pre-commit hook
   ${c.cyan}trace hook status${c.reset}               Check if hook is installed
 
+${c.bold}MCP Server (AI Integration):${c.reset}
+
+  ${c.cyan}trace mcp${c.reset}                       Start MCP server (AI tools call TRACE automatically)
+  ${c.cyan}trace mcp setup${c.reset}                 Show configuration for Claude Code, Cursor, Kiro
+
 ${c.bold}Workflow:${c.reset}
 
   1. ${c.dim}Start session:${c.reset}    trace gate start
@@ -73,6 +79,49 @@ ${c.bold}Workflow:${c.reset}
 
 ${c.dim}https://github.com/anurajsl/trace${c.reset}
 `;
+
+function printMcpSetup() {
+  console.log(`
+${c.cyan}${c.bold}TRACE MCP Server — Setup${c.reset}
+
+The MCP server lets AI tools (Claude Code, Cursor, Kiro) call TRACE
+automatically during conversations. The AI checks impact before modifying
+files, validates coherence after changes, and checks dependency policy
+before adding packages — without you running any commands.
+
+${c.bold}Claude Code${c.reset} — add to ${c.dim}~/.claude.json${c.reset} or project ${c.dim}.claude.json${c.reset}:
+
+  ${c.green}{
+    "mcpServers": {
+      "trace": {
+        "command": "trace-mcp"
+      }
+    }
+  }${c.reset}
+
+${c.bold}Cursor${c.reset} — add to ${c.dim}.cursor/mcp.json${c.reset} in your project:
+
+  ${c.green}{
+    "mcpServers": {
+      "trace": {
+        "command": "trace-mcp"
+      }
+    }
+  }${c.reset}
+
+${c.bold}Kiro${c.reset} — add trace-mcp as an MCP server in Kiro's MCP settings.
+
+${c.bold}Tools exposed:${c.reset}
+  ${c.cyan}trace_context${c.reset}     Project state, anchors, consumers (call at session start)
+  ${c.cyan}trace_impact${c.reset}      Blast radius analysis (call before modifying files)
+  ${c.cyan}trace_check${c.reset}       Coherence validation (call after changes)
+  ${c.cyan}trace_status${c.reset}      Quick health overview
+  ${c.cyan}trace_deps_check${c.reset}  Dependency policy check (call before adding packages)
+  ${c.cyan}trace_log${c.reset}         Record session activity to PROJECT_LOG
+
+${c.dim}After setup, restart your AI tool. TRACE tools appear automatically.${c.reset}
+`);
+}
 
 async function main() {
   switch (command) {
@@ -87,8 +136,13 @@ async function main() {
       break;
     }
     case 'deps': {
-      const { runDeps } = await import('../src/deps.js');
-      runDeps(args[0]);
+      if (args[0] === 'audit') {
+        const { runDepsAudit } = await import('../src/deps-audit.js');
+        runDepsAudit(args.slice(1));
+      } else {
+        const { runDeps } = await import('../src/deps.js');
+        runDeps(args[0]);
+      }
       break;
     }
     case 'check': {
@@ -173,6 +227,15 @@ async function main() {
     case 'hook': {
       const { runHook } = await import('../src/hook.js');
       runHook(args);
+      break;
+    }
+    case 'mcp': {
+      if (args[0] === 'setup') {
+        printMcpSetup();
+      } else {
+        const { startServer } = await import('../src/mcp-server.js');
+        startServer();
+      }
       break;
     }
     case 'license': {
