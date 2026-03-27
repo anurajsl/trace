@@ -1,4 +1,4 @@
-# TRACE — Structural Coherence Engineering
+# TRACE - Structural Coherence Engineering
 
 [![npm version](https://img.shields.io/npm/v/trace-coherence.svg)](https://www.npmjs.com/package/trace-coherence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -9,7 +9,7 @@
 
 When AI tools help you build software, files drift out of sync across sessions. An anchor changes but its consumers don't. Docs fall behind. Complexity creeps in. Nobody notices until production breaks.
 
-TRACE enforces structural integrity automatically — so you ship with confidence, not crossed fingers.
+TRACE enforces structural integrity automatically - so you ship with confidence, not crossed fingers.
 
 ## Install
 
@@ -49,8 +49,8 @@ trace gate start     # Begin session (warn mode — gradual adoption)
 ### Onboarding
 | Command | What it does |
 |---------|-------------|
-| `trace init` | New project — full enforcement from day one |
-| `trace scan` | Existing project — auto-detection + baseline + quality tool detection |
+| `trace init` | New project - full enforcement from day one |
+| `trace scan` | Existing project - auto-detection + baseline + quality tool detection |
 
 ### Daily Workflow
 | Command | What it does |
@@ -92,7 +92,7 @@ trace gate start     # Begin session (warn mode — gradual adoption)
 | Command | What it does |
 |---------|-------------|
 | `trace validate` | Check trace.yaml for errors, typos, and "did you mean?" suggestions |
-| `trace upgrade` | Add missing config sections — schema migration without data loss |
+| `trace upgrade` | Add missing config sections - schema migration without data loss |
 | `trace watch` | Monitor files + auto-session when AI skips gates |
 | `trace hook install` | Install pre-commit hook (blocks incoherent commits) |
 | `trace hook uninstall` | Remove pre-commit hook |
@@ -186,9 +186,9 @@ trace metrics     # After 5+ sessions
 
 ## Two Tracks
 
-**Track 1: New projects** (`trace init`) — Full enforcement. Gates default to "block."
+**Track 1: New projects** (`trace init`) - Full enforcement. Gates default to "block."
 
-**Track 2: Existing projects** (`trace scan`) — Auto-detects everything. Creates a baseline. Gates default to "warn." New code is enforced; old files come into compliance gradually. No retrofit moment.
+**Track 2: Existing projects** (`trace scan`) - Auto-detects everything. Creates a baseline. Gates default to "warn." New code is enforced; old files come into compliance gradually. No retrofit moment.
 
 ## Stats
 
@@ -202,4 +202,4 @@ trace metrics     # After 5+ sessions
 
 ## License
 
-MIT — Created by Anuraj
+MIT 
