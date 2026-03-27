@@ -1,0 +1,22 @@
+# ============================================================
+# TRACE — Backlog & Planning Tracker (PLAN.yaml)
+# ============================================================
+# Lightweight Kanban-style tracking. No UI needed.
+# Status: todo | in_progress | done | deferred
+# Priority: critical | high | medium | low
+# Updated by: trace gate end (planning reconciliation step)
+# ============================================================
+
+current_sprint: ""
+updated: "{DATE}"
+
+items:
+  # Example:
+  # - id: ITEM-001
+  #   title: "Implement user authentication"
+  #   status: todo
+  #   priority: high
+  #   sprint: "S01"
+  #   discovered_in: ""
+  #   assigned_to: ""
+  #   notes: ""

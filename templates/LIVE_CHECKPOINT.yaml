@@ -1,0 +1,14 @@
+# LIVE SESSION CHECKPOINT
+# Volatile. Append-only during session. Auto-deleted when End Gate passes.
+# Purpose: Crash recovery. If session is interrupted, next session reads this.
+# Rule: If checkpoint conflicts with file system, file system wins.
+
+session_started: ""
+sprint: ""
+contributor: ""
+
+checkpoints: []
+  # - timestamp: "2026-03-08T10:30:00Z"
+  #   last_file_modified: "src/auth/middleware.ts"
+  #   last_verification_result: "tier1_pass"
+  #   next_step: "Update auth documentation"
