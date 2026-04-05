@@ -1,0 +1,54 @@
+# ----------------------------------------------------------
+# TRACE Organization Config
+# Place at: ~/.trace/org-config.yaml
+# Or in a shared repo: .trace/org-config.yaml
+#
+# Project-level trace.yaml inherits from this file.
+# Project values override org values where both exist.
+# ----------------------------------------------------------
+
+organization:
+  name: "YourCompany"
+
+# Org-wide policies — injected into every project's AI context
+policies:
+  data:
+    - "Never paste client production data into AI tools"
+    - "Never paste credentials, secrets, or API keys"
+    - "Client business logic is confidential"
+  compliance:
+    - "All code must pass security scan before merge"
+    - "No AI-generated code ships without human review"
+    - "Maintain audit trail for all AI-assisted changes"
+  workflow:
+    - "One ticket per session"
+    - "All sessions must have gate start and gate end"
+
+# Org-wide dependency rules — inherited by all projects
+dependencies:
+  policy: moderate
+  blocked:
+    - "*-polyfill"
+  rules:
+    require_license: true
+    blocked_licenses:
+      - GPL-3.0
+      - AGPL-3.0
+    max_age_without_update: 365
+    warn_prerelease: true
+
+# Org-wide quality checks — merged with project checks
+quality:
+  checks:
+    - name: "Secrets scan"
+      command: "npx gitleaks detect --no-git"
+      on_fail: block
+
+# Org-wide thresholds — project can override
+thresholds:
+  max_file_lines: 400
+  max_function_lines: 50
+
+# Org-wide debt limit
+debt:
+  max_accumulated: 5

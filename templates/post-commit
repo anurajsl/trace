@@ -1,0 +1,17 @@
+#!/bin/sh
+# TRACE post-commit hook
+# Logs the commit to PROJECT_LOG and regenerates AI context.
+# Installed by: trace activate
+
+TRACE=$(command -v trace 2>/dev/null)
+if [ -z "$TRACE" ]; then
+  TRACE="npx --yes trace-coherence"
+fi
+
+if [ ! -f "trace.yaml" ]; then
+  exit 0
+fi
+
+# Regenerate AI context for next session
+$TRACE gate start --quiet 2>/dev/null || true
+exit 0

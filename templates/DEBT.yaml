@@ -1,0 +1,14 @@
+# TRACE Debt Log
+# Created when gates are overridden or phases skipped.
+# Must be resolved within the specified window.
+
+entries: []
+  # - id: "DEBT-001"
+  #   created: "2026-03-08"
+  #   severity: "major"          # major (1 cycle) | minor (3 cycles)
+  #   type: "skipped_verification"
+  #   description: "Tier-2 tests not run for payment flow change"
+  #   reason: "Production hotfix, no time for full suite"
+  #   resolve_by: "Sprint S9"
+  #   resolved: false
+  #   resolution: ""

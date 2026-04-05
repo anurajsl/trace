@@ -1,0 +1,92 @@
+name: 'TRACE Coherence Check'
+description: 'Run TRACE structural coherence verification on pull requests. Catches anchor-consumer drift, complexity violations, shrinking tests, and dependency policy violations.'
+author: 'Anuraj'
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  mode:
+    description: 'Check mode: "ci" for PR-scoped, "check" for full project'
+    required: false
+    default: 'ci'
+  json:
+    description: 'Output JSON results'
+    required: false
+    default: 'true'
+  comment:
+    description: 'Post results as PR comment (requires pull_request trigger)'
+    required: false
+    default: 'false'
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '18'
+
+outputs:
+  status:
+    description: 'Check result: pass, warn, or block'
+  report:
+    description: 'Path to the generated report file'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install TRACE
+      shell: bash
+      run: npm install -g trace-coherence
+
+    - name: Run TRACE check
+      id: trace-check
+      shell: bash
+      run: |
+        set +e
+        if [ "${{ inputs.mode }}" = "ci" ]; then
+          if [ "${{ inputs.json }}" = "true" ]; then
+            trace ci --json > trace-report.json 2>&1
+            RESULT=$?
+          else
+            trace ci > trace-report.txt 2>&1
+            RESULT=$?
+          fi
+        else
+          if [ "${{ inputs.json }}" = "true" ]; then
+            trace check --json > trace-report.json 2>&1
+            RESULT=$?
+          else
+            trace check > trace-report.txt 2>&1
+            RESULT=$?
+          fi
+        fi
+
+        if [ $RESULT -eq 0 ]; then
+          echo "status=pass" >> $GITHUB_OUTPUT
+        else
+          echo "status=block" >> $GITHUB_OUTPUT
+        fi
+
+        REPORT_FILE="trace-report.json"
+        [ ! -f "$REPORT_FILE" ] && REPORT_FILE="trace-report.txt"
+        echo "report=$REPORT_FILE" >> $GITHUB_OUTPUT
+
+        # Display results
+        cat "$REPORT_FILE"
+        exit $RESULT
+
+    - name: Generate PR comment
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      run: |
+        trace ci --comment-file trace-pr-comment.md 2>/dev/null || true
+
+    - name: Post PR comment
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: trace-pr-comment.md
+      continue-on-error: true

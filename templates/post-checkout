@@ -1,0 +1,21 @@
+#!/bin/sh
+# TRACE post-checkout hook
+# Regenerates AI context when switching branches.
+# Installed by: trace activate
+
+TRACE=$(command -v trace 2>/dev/null)
+if [ -z "$TRACE" ]; then
+  TRACE="npx --yes trace-coherence"
+fi
+
+if [ ! -f "trace.yaml" ]; then
+  exit 0
+fi
+
+# Only run on branch switch (not file checkout)
+# $3 is 1 for branch checkout, 0 for file checkout
+if [ "$3" = "1" ]; then
+  echo "TRACE: Branch changed. Regenerating AI context..."
+  $TRACE gate start --quiet 2>/dev/null || true
+fi
+exit 0

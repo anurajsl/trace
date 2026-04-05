@@ -1,0 +1,39 @@
+#!/bin/sh
+# TRACE pre-commit hook
+# Runs coherence check before allowing commits.
+# Install with: trace hook install
+
+# Find trace CLI
+TRACE=$(command -v trace 2>/dev/null)
+if [ -z "$TRACE" ]; then
+  # Try npx
+  TRACE="npx --yes trace-coherence"
+fi
+
+# Check if this is a TRACE project
+if [ ! -f "trace.yaml" ]; then
+  exit 0  # Not a TRACE project, allow commit
+fi
+
+echo ""
+echo "TRACE: Running pre-commit coherence check..."
+echo ""
+
+# Run trace check
+$TRACE check 2>&1
+CHECK_EXIT=$?
+
+if [ $CHECK_EXIT -ne 0 ]; then
+  echo ""
+  echo "TRACE: Coherence check failed. Commit blocked."
+  echo ""
+  echo "  Fix the issues above, then try again."
+  echo "  To bypass (creates tracked debt): trace override \"reason\" && git commit"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "TRACE: Coherence check passed."
+echo ""
+exit 0

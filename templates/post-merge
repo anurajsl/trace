@@ -1,0 +1,17 @@
+#!/bin/sh
+# TRACE post-merge hook
+# Regenerates AI context after pulling/merging.
+# Installed by: trace activate
+
+TRACE=$(command -v trace 2>/dev/null)
+if [ -z "$TRACE" ]; then
+  TRACE="npx --yes trace-coherence"
+fi
+
+if [ ! -f "trace.yaml" ]; then
+  exit 0
+fi
+
+echo "TRACE: Merge detected. Regenerating AI context..."
+$TRACE gate start --quiet 2>/dev/null || true
+exit 0

@@ -1,0 +1,33 @@
+# TRACE_STATE — Current project snapshot
+# Updated at the end of every session.
+# Any contributor (human or AI) reads this first.
+
+project: "{PROJECT_NAME}"
+last_updated: "{DATE}"
+last_session_by: ""
+current_sprint: ""
+
+status:
+  health: "green"          # green | yellow | red
+  open_debt: 0
+  anchor_count: 0
+  test_count:
+    tier1: 0
+    tier2: 0
+    tier3: 0
+
+recent_changes: []
+  # - date: "2026-03-08"
+  #   by: "anuraj"
+  #   type: "feature"
+  #   summary: "Added payment flow"
+  #   anchors_affected: ["payment_schema"]
+
+next_priorities: []
+  # - "Resolve debt: missing tier-2 test for auth"
+  # - "Review payment_flow anchor (3 sprints stale)"
+
+known_issues: []
+  # - severity: "minor"
+  #   description: "Firefox scrollbar flicker on settings page"
+  #   root_cause: "CSS overflow property on .settings-panel"

@@ -1,0 +1,9 @@
+# ============================================================
+# TRACE — Gate Outcome Metrics
+# ============================================================
+# Automatically recorded at each gate end.
+# Used by trace metrics for threshold calibration suggestions.
+# One-way ratchet: suggestions only tighten, never loosen.
+# ============================================================
+
+outcomes: []
